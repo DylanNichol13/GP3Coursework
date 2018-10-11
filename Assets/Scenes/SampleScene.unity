@@ -244,13 +244,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 534669902}
-  m_LocalRotation: {x: 0.50452757, y: 0, z: 0, w: 0.86339563}
+  m_LocalRotation: {x: 0.2719443, y: 0, z: 0, w: 0.962313}
   m_LocalPosition: {x: 0, y: 88.04, z: -87}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 60.6, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 31.56, y: 0, z: 0}
 --- !u!1 &687156224
 GameObject:
   m_ObjectHideFlags: 0
@@ -350,8 +350,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a504cc1f77de3d47a206eed809d1a5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  power: 3
-  scale: 2
+  power: 1.2
+  scale: 5
 --- !u!1 &777012879
 GameObject:
   m_ObjectHideFlags: 0
@@ -475,7 +475,7 @@ GameObject:
   - component: {fileID: 1873093781}
   - component: {fileID: 1873093780}
   m_Layer: 0
-  m_Name: Spawner
+  m_Name: ObstacleCreator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
