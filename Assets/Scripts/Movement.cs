@@ -3,23 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Movement : MonoBehaviour {
-    //map boundaries
-    private float xBound = 45;
-    private float zBound = 50;
     //Sphere movement speed
     private float speed = 10f;
     //Movement vector to be applied to Rigidbody
     private Vector3 movement;
+    //Get the ground obj
+    private GameObject groundObj;
 
-	void FixedUpdate()
+    //Called on start of application
+    private void Start()
+    {
+        groundObj = GameObject.Find("GameWorld");
+    }
+
+	private void FixedUpdate()
     {
         //Moving to mouse position
         MouseMovement();
         //Clamp player movement
-        CheckBoundaries(xBound, zBound);
+        CheckBoundaries();
     }
 
-    void MouseMovement()
+    private void MouseMovement()
     {
         //Raycast to find the terrain
         RaycastHit hit;
@@ -36,42 +41,53 @@ public class Movement : MonoBehaviour {
         }
     }
 
-    void AddTheForce(Vector3 movement)
+    private void AddTheForce(Vector3 movement)
     {
         GetComponent<Rigidbody>().AddForce(movement * speed);
     }
 
     //Check the player against map boundaries
-    void CheckBoundaries(float x, float z)
+    private void CheckBoundaries()
     {
         //Current X and Z positions
         float xPos = transform.position.x;
+        float yPos = transform.position.y;
         float zPos = transform.position.z;
+        //Origin X and Z of the game world 
+        float groundX = groundObj.transform.position.x;
+        float groundZ = groundObj.transform.position.z;
+        //Half of the map dimensions, to be added to the origin to suitably wrap
+        float halfX = groundObj.GetComponent<Renderer>().bounds.size.x / 2f;
+        float halfZ = groundObj.GetComponent<Renderer>().bounds.size.z / 2f;
 
         //Check against X boundaries and reset if needed
-        if (xPos > x)
-            xPos = x;
-        else if (xPos < -x)
-            xPos = -x;
+        if (xPos > groundX + halfX)
+            xPos = groundX - halfX;
+        else if (xPos < groundX - halfX)
+            xPos = groundX + halfX;
 
-        //Check agains Z boundaries and reset if needed
-        if (zPos > z)
-            zPos = z;
-        else if (zPos < -z)
-            zPos = -z;
+        //Check against Z boundaries and reset if needed
+        if (zPos > groundZ + halfZ)
+            zPos = groundZ - halfZ;
+        else if (zPos < groundZ - halfZ)
+            zPos = groundZ + halfZ;
 
-        //Set the position based on any necessary changes
-        SetPosition(new Vector3(xPos, transform.position.y, zPos));
+
+        //Reset Y if wrapping to avoid falling from map
+        if (xPos != transform.position.x || zPos != transform.position.z)
+            yPos = 12;
+        //Set the posiSetYOnWraption based on any necessary changes
+        SetPosition(new Vector3(xPos, yPos, zPos));
     }
 
     //Set position of the sphere based on boundaries above, to avoid falling off map
-    void SetPosition(Vector3 pos)
+    private void SetPosition(Vector3 pos)
     {
         transform.position = pos;
     }
 
     //Colision start
-    void OnCollisionEnter(Collision col)
+    private void OnCollisionEnter(Collision col)
     {
         Debug.Log("Collision Enter");
         //Find action for the tag of the object
@@ -88,18 +104,19 @@ public class Movement : MonoBehaviour {
                 //Destroy the player
                 Debug.Log("You hit a red sphere and died!");
                 Destroy(gameObject);
+                Camera.main.GetComponent<CameraController>().PlayerDied();
                 break;
         }
     }
 
     //Continuous collision
-    void OnCollisionStay(Collision col)
+    private void OnCollisionStay(Collision col)
     {
         Debug.Log("Collding");
     }
 
     //Collision ended
-    void OnCollisionExit(Collision col)
+    private void OnCollisionExit(Collision col)
     {
         Debug.Log("Collision Ended");
     }
