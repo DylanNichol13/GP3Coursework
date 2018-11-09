@@ -89,7 +89,6 @@ public class Movement : MonoBehaviour {
     //Colision start
     private void OnCollisionEnter(Collision col)
     {
-        Debug.Log("Collision Enter");
         //Find action for the tag of the object
         switch (col.gameObject.tag)
         {
@@ -112,12 +111,10 @@ public class Movement : MonoBehaviour {
     //Continuous collision
     private void OnCollisionStay(Collision col)
     {
-        Debug.Log("Collding");
     }
 
     //Collision ended
     private void OnCollisionExit(Collision col)
     {
-        Debug.Log("Collision Ended");
     }
 }
