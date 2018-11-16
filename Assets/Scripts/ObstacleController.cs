@@ -7,15 +7,25 @@ public class ObstacleController : MonoBehaviour {
     ArrayList obstacles;
     //Parent object for obstacles
     GameObject obstacleContainer;
+    //Renderer of world
+    Renderer worldRenderer;
+
+    //Set in inspector
+    [SerializeField]
+    Vector3 blackHoleSize;
 
 	// Use this for initialization
 	void Start () {
+        //Get the renderer comp from world map
+        worldRenderer = GameObject.Find("GameWorld").GetComponent<Renderer>();
         //Generating obstacle container
         obstacleContainer = CreateObstacleContainer();
         //Generate blue cube obstacles
         obstacles = CreateObstacles();
         //Generating red sphere obstacles
         GenerateObstacles();
+        //Gen a black hole
+        GenerateBlackHole();
 	}
 
     private GameObject CreateObstacleContainer()
@@ -47,7 +57,7 @@ public class ObstacleController : MonoBehaviour {
         //Declaration of new gameobject
         GameObject newObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         //Randomize the obstacle starting position
-        newObj.transform.position = new Vector3(Random.Range(-20, 20), 5, Random.Range(-20, 20));
+        newObj.transform.position = GetRandomWorldPos();
         //Get renderer and rigidbody components
         Renderer renderer = newObj.GetComponent<Renderer>();
         Rigidbody rb = newObj.AddComponent<Rigidbody>();
@@ -72,7 +82,7 @@ public class ObstacleController : MonoBehaviour {
             //Creat the object
             GameObject redSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             //Randomize the obstacle starting position
-            redSphere.transform.position = new Vector3(Random.Range(-20, 20), 5, Random.Range(-20, 20));
+            redSphere.transform.position = GetRandomWorldPos();
             //Get renderer and rigidbody components
             Renderer renderer = redSphere.GetComponent<Renderer>();
             Rigidbody rb = redSphere.AddComponent<Rigidbody>();
@@ -83,5 +93,36 @@ public class ObstacleController : MonoBehaviour {
             //Set object name in hierarchy
             redSphere.name = "redSphere: " + i;
         }
+    }
+
+    //Generate a black hole
+    private void GenerateBlackHole()
+    {
+        GameObject blackHole = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        blackHole.transform.localScale = blackHoleSize;
+        blackHole.transform.position = GetRandomWorldPos();
+        
+
+        Renderer renderer = blackHole.GetComponent<Renderer>();
+        Rigidbody rb = blackHole.AddComponent<Rigidbody>();
+        blackHole.GetComponent<CapsuleCollider>().enabled = false;
+        blackHole.AddComponent<BoxCollider>();
+
+        rb.constraints = RigidbodyConstraints.FreezeAll;
+        
+
+        renderer.material.color = Color.black;
+        blackHole.name = "blackHole";
+    }
+
+    //Get a random position to spawn objects
+    Vector3 GetRandomWorldPos()
+    {
+        //Get random position coords depending on the mesh boundaries
+        float x = Random.Range(worldRenderer.bounds.min.x, worldRenderer.bounds.max.x);
+        float z = Random.Range(worldRenderer.bounds.min.z, worldRenderer.bounds.max.z);
+
+        //Return the new position with a default Y value
+        return new Vector3(x, worldRenderer.bounds.max.y, z);
     }
 }

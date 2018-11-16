@@ -13,7 +13,7 @@ public class PlaneScript : MonoBehaviour {
     void Start()
     {
         //Make terrain on startup
-        MakeSomeNoise();
+        //MakeSomeNoise();
     }
 
     void Update()
@@ -33,7 +33,7 @@ public class PlaneScript : MonoBehaviour {
 
         //Get map object components for mesh
         MeshFilter mf = GetComponent<MeshFilter>();
-        MeshCollider mc = GetComponent<MeshCollider>();
+        MeshCollider mc = transform.GetChild(0).GetComponent<MeshCollider>();
         //Vertices of the plain
         Vector3[] verts = mf.mesh.vertices;
 
@@ -58,7 +58,7 @@ public class PlaneScript : MonoBehaviour {
     //Reseting the player position
     private void ResetPlayerPos()
     {
-        GameObject.Find("Player").transform.position = new Vector3(0, 20, 0);
+        GameObject.Find("Player").transform.position = new Vector3(0, GetComponent<MeshRenderer>().bounds.max.y, 0);
     }
 } 
 

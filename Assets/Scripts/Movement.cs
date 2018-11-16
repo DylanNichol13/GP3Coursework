@@ -3,17 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Movement : MonoBehaviour {
-    //Sphere movement speed
-    private float speed = 10f;
     //Movement vector to be applied to Rigidbody
     private Vector3 movement;
     //Get the ground obj
     private GameObject groundObj;
+    //Movement target
+    private Vector3 target;
+
+    //Configurable in inspector
+    [SerializeField]
+    private float speed;
+    [SerializeField]
+    private GameObject targetHighlighter;
 
     //Called on start of application
     private void Start()
     {
+        //Get the world object
         groundObj = GameObject.Find("GameWorld");
+        //Hide target highlighter first
+        targetHighlighter.transform.localScale = new Vector3(0, 0, 0);
     }
 
 	private void FixedUpdate()
@@ -22,22 +31,34 @@ public class Movement : MonoBehaviour {
         MouseMovement();
         //Clamp player movement
         CheckBoundaries();
+        if (transform.position != target)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+            targetHighlighter.transform.position = target;
+            targetHighlighter.transform.localScale = new Vector3(1, 1, 1);
+        }
+        else
+        {
+            targetHighlighter.transform.localScale = new Vector3(0, 0, 0);
+        }
     }
 
     private void MouseMovement()
     {
+        if (Input.GetMouseButton(0)) { 
         //Raycast to find the terrain
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //If the ray hits an object
-        if (Physics.Raycast(ray, out hit, 1000))
-        {
-            //Make the movement target the hit location of mouse
-            Vector3 target = hit.point;
-            //Apply necessary force to move to the target position
-            AddTheForce((target - transform.position) *0.01f);
-            //Draw debugging line
-            Debug.DrawLine(ray.origin, hit.point);
+            //If the ray hits an object
+            if (Physics.Raycast(ray, out hit, 1000))
+            {
+                //Make the movement target the hit location of mouse
+                target = hit.point;
+                //Apply necessary force to move to the target position
+                //AddTheForce((target - transform.position) * 0.5f);
+                //Draw debugging line
+                Debug.DrawLine(ray.origin, hit.point);
+            }
         }
     }
 
