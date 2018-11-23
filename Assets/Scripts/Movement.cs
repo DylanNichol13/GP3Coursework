@@ -9,6 +9,10 @@ public class Movement : MonoBehaviour {
     private GameObject groundObj;
     //Movement target
     private Vector3 target;
+    //Get the energy script for reference
+    private PlayerEnergyScript energyScript;
+    //Game controller
+    private GameController controller;
 
     //Configurable in inspector
     [SerializeField]
@@ -23,6 +27,16 @@ public class Movement : MonoBehaviour {
         groundObj = GameObject.Find("GameWorld");
         //Hide target highlighter first
         targetHighlighter.transform.localScale = new Vector3(0, 0, 0);
+
+        energyScript = GetComponent<PlayerEnergyScript>();
+        controller = GameObject.Find("Controller").GetComponent<GameController>();
+    }
+
+    public void StartGame()
+    {
+        transform.position = new Vector3(0, 7.5f, 0);
+        transform.localScale = new Vector3(3, 3, 3);
+        energyScript.ResetEnergy();
     }
 
 	private void FixedUpdate()
@@ -118,14 +132,26 @@ public class Movement : MonoBehaviour {
                 //Destroy the blue cube
                 Debug.Log("You collected a blue cube!");
                 Destroy(col.gameObject);
+                energyScript.AddEnergy(energyScript.GetMushroomEnergy());
                 break;
             //Red object
             case ("redObj"):
                 //Destroy the player
                 Debug.Log("You hit a red sphere and died!");
-                Destroy(gameObject);
-                Camera.main.GetComponent<CameraController>().PlayerDied();
+                KillPlayer();
                 break;
+            //Enemy Player
+            case ("enemyPlayer"):
+                //Kill the player object
+                KillPlayer();
+                break;
+            //hit black hole
+            case ("blackHole"):
+                //Kill player
+                KillPlayer();
+                break;
+
+
         }
     }
 
@@ -137,5 +163,16 @@ public class Movement : MonoBehaviour {
     //Collision ended
     private void OnCollisionExit(Collision col)
     {
+    }
+
+    //Kill the player after death criteria met
+    private void KillPlayer()
+    {
+        //End game process
+        controller.EndGame();
+        //Destroy the object
+        transform.localScale = new Vector3(0, 0, 0);
+        //Set camera to stop following
+        Camera.main.GetComponent<CameraController>().PlayerDied();
     }
 }

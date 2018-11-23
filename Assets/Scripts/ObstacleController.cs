@@ -15,7 +15,7 @@ public class ObstacleController : MonoBehaviour {
     Vector3 blackHoleSize;
 
 	// Use this for initialization
-	void Start () {
+	public void StartNewGame () {
         //Get the renderer comp from world map
         worldRenderer = GameObject.Find("GameWorld").GetComponent<Renderer>();
         //Generating obstacle container
@@ -69,6 +69,8 @@ public class ObstacleController : MonoBehaviour {
         newObj.transform.parent = obstacleContainer.transform;
         //Set tag of blue obj
         newObj.tag = "blueObj";
+        //Add mushroom script to the object
+        newObj.AddComponent<MushroomScript>();
         //Return the new object
         return newObj;
     }
@@ -98,21 +100,28 @@ public class ObstacleController : MonoBehaviour {
     //Generate a black hole
     private void GenerateBlackHole()
     {
+        //Create cylinder primitive
         GameObject blackHole = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        //Set size to predetermined size
         blackHole.transform.localScale = blackHoleSize;
+        //Get a random position for the black hole
         blackHole.transform.position = GetRandomWorldPos();
         
-
+        //Get components
         Renderer renderer = blackHole.GetComponent<Renderer>();
+        //Add rigidbody comp
         Rigidbody rb = blackHole.AddComponent<Rigidbody>();
+        //Disable Capsule Collider
         blackHole.GetComponent<CapsuleCollider>().enabled = false;
+        //Add box collision
         blackHole.AddComponent<BoxCollider>();
-
+        //Freeze position and rotations
         rb.constraints = RigidbodyConstraints.FreezeAll;
-        
-
+        //Set to black
         renderer.material.color = Color.black;
+        //Change name and tags
         blackHole.name = "blackHole";
+        blackHole.tag = "blackHole";
     }
 
     //Get a random position to spawn objects

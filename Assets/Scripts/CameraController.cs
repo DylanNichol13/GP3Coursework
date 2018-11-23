@@ -9,6 +9,7 @@ public class CameraController : MonoBehaviour {
     private bool isAlive = true;
     //Set the player to dead
     public void PlayerDied() { isAlive = false; }
+    public void PlayerReset() { isAlive = true; }
 
 	// Use this for initialization
 	void Start () {
