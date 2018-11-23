@@ -21,6 +21,8 @@ public class LeaderboardScript : MonoBehaviour {
 
     public void DisplayLeaderBoard()
     {
+        ClearExistingLeaderboard();
+
         List<LeaderboardListing> list = new List<LeaderboardListing>();
         list = sql.GetTopFive();
         print(list.Count);
@@ -30,9 +32,25 @@ public class LeaderboardScript : MonoBehaviour {
             newObj.transform.parent = leaderboardObj.transform.parent;
             newObj.SetActive(true);
             newObj.transform.GetChild(1).GetComponent<Text>().text = l.name;
-            newObj.transform.GetChild(2).GetComponent<Text>().text = l.score.ToString();
+            newObj.transform.GetChild(2).GetComponent<Text>().text = l.score.ToString() + " Points";
         }
     }
 
-   
+   private void ClearExistingLeaderboard()
+    {
+        //Get parent container
+        Transform container = leaderboardObj.transform.parent;
+        //Counter for destroying leaderboard objects
+        int index = 0;
+        //Get each listing
+        foreach (Transform t in container)
+        {
+            //Do not destroy the prefab object
+            if(index > 0)
+                //Destroy
+                Destroy(t.gameObject);
+            //Incremement for next step
+            index++;
+        }
+    }
 }

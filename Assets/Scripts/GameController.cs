@@ -11,18 +11,18 @@ public class GameController : MonoBehaviour {
     private ObstacleController obstacleController;
     private Movement movementScript;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start() {
         ResetUI();
         EnableMenu();
         obstacleController = GameObject.Find("ObstacleCreator").GetComponent<ObstacleController>();
         movementScript = GameObject.Find("Player").GetComponent<Movement>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    }
+
+    // Update is called once per frame
+    void Update() {
+
+    }
 
     void ResetUI()
     {

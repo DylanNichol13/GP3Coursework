@@ -24,8 +24,13 @@ public class CameraController : MonoBehaviour {
 
     private void ChasePlayer()
     {
-        transform.position = playerObj.transform.position;
+        //Camera Pivot
+        transform.parent.position = playerObj.transform.position;
+        
+    }
 
-        transform.position = new Vector3(transform.position.x, transform.position.y + 30, transform.position.z-30);
+    public void RotateCam(float speed)
+    {
+        transform.parent.Rotate(0, speed*Time.deltaTime, 0);
     }
 }

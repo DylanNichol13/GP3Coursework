@@ -19,10 +19,9 @@ public class SQLtest : MonoBehaviour
     void Start()
     {
         conn = "URI=file:" + Application.dataPath + "/test.db";
-
         CreateTable();
-
         controller = GameObject.Find("Controller").GetComponent<GameController>();
+        
     }
 
     private void CreateTable()
@@ -32,13 +31,26 @@ public class SQLtest : MonoBehaviour
 
         IDbCommand cmd = dbConn.CreateCommand();
 
-        cmd.CommandText = "DROP TABLE IF EXISTS highscore;";
-        cmd.ExecuteNonQuery();
-
         cmd.CommandText = "CREATE TABLE IF NOT EXISTS highscore (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(20), score INT);";
         cmd.ExecuteNonQuery();
 
         dbConn.Close();
+    }
+
+    public void ClearLeaderboard()
+    {
+        //Open DB
+        dbConn.Open();
+        //New command
+        IDbCommand cmd = dbConn.CreateCommand();
+        //Delate the table 'highscore'
+        cmd.CommandText = "DROP TABLE IF EXISTS highscore;";
+        cmd.ExecuteNonQuery();
+        //Close db and dispose commands to finish
+        cmd.Dispose();
+        dbConn.Close();
+        //Go to the menu
+        GameObject.Find("Controller").GetComponent<GameController>().EnableMenu();
     }
 
     public void AddToDatabase()
@@ -63,7 +75,6 @@ public class SQLtest : MonoBehaviour
             float id_ = reader.GetFloat(0);
             string name_ = reader.GetString(1);
             float score_ = reader.GetFloat(2);
-            print(id_ + " " + name_ + " " + score_);
         }
         //Close DB
         dbConn.Close();

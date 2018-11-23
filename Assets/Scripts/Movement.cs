@@ -13,23 +13,21 @@ public class Movement : MonoBehaviour {
     private PlayerEnergyScript energyScript;
     //Game controller
     private GameController controller;
+    //Rigid body of object
+    private Rigidbody rb;
 
     //Configurable in inspector
     [SerializeField]
     private float speed;
-    [SerializeField]
-    private GameObject targetHighlighter;
-
     //Called on start of application
     private void Start()
     {
         //Get the world object
         groundObj = GameObject.Find("GameWorld");
-        //Hide target highlighter first
-        targetHighlighter.transform.localScale = new Vector3(0, 0, 0);
 
         energyScript = GetComponent<PlayerEnergyScript>();
         controller = GameObject.Find("Controller").GetComponent<GameController>();
+        rb = GetComponent<Rigidbody>();
     }
 
     public void StartGame()
@@ -41,38 +39,42 @@ public class Movement : MonoBehaviour {
 
 	private void FixedUpdate()
     {
-        //Moving to mouse position
-        MouseMovement();
+        //Moving to based on key presses
+        CheckMovement();
         //Clamp player movement
         CheckBoundaries();
-        if (transform.position != target)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
-            targetHighlighter.transform.position = target;
-            targetHighlighter.transform.localScale = new Vector3(1, 1, 1);
-        }
-        else
-        {
-            targetHighlighter.transform.localScale = new Vector3(0, 0, 0);
-        }
+
     }
 
-    private void MouseMovement()
+    private void CheckMovement()
     {
-        if (Input.GetMouseButton(0)) { 
-        //Raycast to find the terrain
-        RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            //If the ray hits an object
-            if (Physics.Raycast(ray, out hit, 1000))
-            {
-                //Make the movement target the hit location of mouse
-                target = hit.point;
-                //Apply necessary force to move to the target position
-                //AddTheForce((target - transform.position) * 0.5f);
-                //Draw debugging line
-                Debug.DrawLine(ray.origin, hit.point);
-            }
+        //Move forward with A or UP
+        if(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+        {
+            //Move forward acording to camera rotations
+            transform.position += Camera.main.transform.forward * Time.deltaTime * speed;
+        }
+        //Move left with A or LEFT
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        {
+            //Rotate object
+            transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y - 3, transform.eulerAngles.z);
+            //Rotate camera view
+            Camera.main.GetComponent<CameraController>().RotateCam(-100);
+        }
+        //Move right with D or RIGHT
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        {
+            //Roate gameobject to show movement
+            transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y + 3, transform.eulerAngles.z);
+            //Rotate camera view
+            Camera.main.GetComponent<CameraController>().RotateCam(100);
+        }
+        //Move back with S or DOWN
+        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        {
+            //Moving backwards is slowed
+            transform.position -= transform.forward * Time.deltaTime * speed/2;
         }
     }
 
