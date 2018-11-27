@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1273,7 +1273,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 687156224}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2a504cc1f77de3d47a206eed809d1a5e, type: 3}
   m_Name: 
@@ -1309,7 +1309,7 @@ Rigidbody:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 777012879}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 10
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -1395,7 +1395,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73efa76333fe68b4e8eae43c5e4eeaa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 39
+  speed: 20
 --- !u!114 &777012886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1419,6 +1419,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mushroomEnergy: 25
+  negativeMushroomEnergy: -10
+  enemyLeechEnergy: -5
 --- !u!1 &786066695
 GameObject:
   m_ObjectHideFlags: 0
@@ -1655,9 +1657,9 @@ GameObject:
   - component: {fileID: 1006319389}
   - component: {fileID: 1006319388}
   - component: {fileID: 1006319387}
-  - component: {fileID: 1006319386}
   - component: {fileID: 1006319392}
   - component: {fileID: 1006319391}
+  - component: {fileID: 1006319393}
   m_Layer: 0
   m_Name: EnemyPlayer
   m_TagString: enemyPlayer
@@ -1665,18 +1667,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1006319386
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1006319385}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3179fb6bc4765784680e6d8fecba3cbf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerObject: {fileID: 777012879}
 --- !u!135 &1006319387
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1771,6 +1761,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1006319393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1006319385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3179fb6bc4765784680e6d8fecba3cbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chaseCoolDown: 8
+  coolDownTimer: 0
+  speed: 25
 --- !u!1 &1020425575
 GameObject:
   m_ObjectHideFlags: 0
@@ -2223,10 +2227,10 @@ RectTransform:
   m_Father: {fileID: 3736052}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 259.3565, y: 0}
-  m_SizeDelta: {x: 518.713, y: 84.4}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 84.4}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &1579522281
 GameObject:

@@ -15,8 +15,14 @@ public class PlayerEnergyScript : MonoBehaviour {
     //Amount added by collecting a mushroom
     [SerializeField]
     private float mushroomEnergy;
+    [SerializeField]
+    private float negativeMushroomEnergy;
+    [SerializeField]
+    private float enemyLeechEnergy;
     //Getter for energy 
     public float GetMushroomEnergy() { return mushroomEnergy; }
+    public float GetNegativeEnergy() { return negativeMushroomEnergy; }
+    public float GetLeechEnergy() { return enemyLeechEnergy; }
 
 	// Use this for initialization
 	void Start () {

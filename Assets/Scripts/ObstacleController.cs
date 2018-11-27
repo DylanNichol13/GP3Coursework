@@ -18,6 +18,8 @@ public class ObstacleController : MonoBehaviour {
 	public void StartNewGame () {
         //Get the renderer comp from world map
         worldRenderer = GameObject.Find("GameWorld").GetComponent<Renderer>();
+        //Clear old objects
+        ClearObjects();
         //Generating obstacle container
         obstacleContainer = CreateObstacleContainer();
         //Generate blue cube obstacles
@@ -27,7 +29,15 @@ public class ObstacleController : MonoBehaviour {
         //Gen a black hole
         GenerateBlackHole();
 	}
-
+    //Called on start to clear objects from a previous session
+    private void ClearObjects()
+    {
+        //Check if there is already a container, 
+        if (obstacleContainer != null)
+            //If there is, destroy this, thus removing old obstacles
+            GameObject.Destroy(obstacleContainer);
+    }
+    //called on start to create a container in hierarchy
     private GameObject CreateObstacleContainer()
     {
         //Initialize the object
@@ -90,6 +100,8 @@ public class ObstacleController : MonoBehaviour {
             Rigidbody rb = redSphere.AddComponent<Rigidbody>();
             //Set material color
             renderer.material.color = Color.red;
+            //Set the parent for tidy hierarchy
+            redSphere.transform.parent = obstacleContainer.transform;
             //Set tag of red object
             redSphere.tag = "redObj";
             //Set object name in hierarchy
@@ -119,6 +131,8 @@ public class ObstacleController : MonoBehaviour {
         rb.constraints = RigidbodyConstraints.FreezeAll;
         //Set to black
         renderer.material.color = Color.black;
+        //Set the parent for tidy hierarchy
+        blackHole.transform.parent = obstacleContainer.transform;
         //Change name and tags
         blackHole.name = "blackHole";
         blackHole.tag = "blackHole";

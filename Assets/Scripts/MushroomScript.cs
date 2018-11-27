@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class MushroomScript : MonoBehaviour {
     //Max death age across all mushrooms
-    public static float maxDeathAge = 20f;
+    public static float maxDeathAge = 40f;
+
+    private float timeElapsed = 0;
     //This mushroom instance
     Mushroom mushroom;
     //
@@ -17,6 +19,8 @@ public class MushroomScript : MonoBehaviour {
         private float age;
         //This mushroom death age
         private float deathAge;
+        //Oscillate offset
+        public float offset;
 
         //Mushroom Constructor
         public Mushroom()
@@ -25,9 +29,11 @@ public class MushroomScript : MonoBehaviour {
             age = 0;
             //Get death age
             deathAge = Random.Range(1, maxDeathAge);
+            //Offset
+            offset = Random.Range(1, 380);
         }
 
-        public bool HasHalfLife()
+        public bool ReachedHalfLife()
         {
             //Calculate half of life span
             float halfLifeAmount = deathAge / 2;
@@ -38,6 +44,16 @@ public class MushroomScript : MonoBehaviour {
             }
             else return false;
         }
+
+        public bool ReachedDeathAge()
+        {
+            if (age >= deathAge)
+            {
+                return true;
+            }
+            else return false;
+        }
+
         //Incrementing age
         public void CalculateAge()
         {
@@ -55,8 +71,14 @@ public class MushroomScript : MonoBehaviour {
     private void Update()
     {
         mushroom.CalculateAge();
+        //Calc elapsed time
+        CalcElapsedTime();
+        //Oscillate this object 
+        Oscillate();
 
-        if (mushroom.HasHalfLife())
+        if (mushroom.ReachedHalfLife())
+            CreatePoisonMushroom();
+        if (mushroom.ReachedDeathAge())
             FloatingBehaviour();
     }
 
@@ -93,6 +115,33 @@ public class MushroomScript : MonoBehaviour {
         }
         //Move object to the target position
         transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, 2 * Time.deltaTime);      
+
+        //Destroy the object once it has reached the target volume
+        if(targetScale.x >= transform.localScale.x)
+        {
+            //Remove game object from game
+            GameObject.Destroy(gameObject);
+        }
+    }
+
+    private void Oscillate()
+    {
+        //Calculation using sin of elapsed time and this random offset associated with the mushroom instance
+        float osc = Mathf.Sin(timeElapsed + mushroom.offset);
+        //Apply rotation using this value
+        transform.localEulerAngles = new Vector3(osc, osc, osc);
+    }
+
+    private void CreatePoisonMushroom()
+    {
+        gameObject.tag = "poisonObj";
+        gameObject.GetComponent<Renderer>().material.color = Color.magenta;
+    }
+
+    private void CalcElapsedTime()
+    {
+        //Increment
+        timeElapsed += Time.deltaTime;
     }
 
 }

@@ -8,6 +8,7 @@ TagManager:
   - blueObj
   - redObj
   - blackHole
+  - poisonObj
   layers:
   - Default
   - TransparentFX

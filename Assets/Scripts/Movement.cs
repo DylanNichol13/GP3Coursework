@@ -52,7 +52,7 @@ public class Movement : MonoBehaviour {
         if(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
             //Move forward acording to camera rotations
-            transform.position += Camera.main.transform.forward * Time.deltaTime * speed;
+            rb.AddForce(Camera.main.transform.forward * speed);
         }
         //Move left with A or LEFT
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
@@ -60,7 +60,7 @@ public class Movement : MonoBehaviour {
             //Rotate object
             transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y - 3, transform.eulerAngles.z);
             //Rotate camera view
-            Camera.main.GetComponent<CameraController>().RotateCam(-100);
+            Camera.main.GetComponent<CameraController>().RotateCam(-130);
         }
         //Move right with D or RIGHT
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
@@ -68,13 +68,13 @@ public class Movement : MonoBehaviour {
             //Roate gameobject to show movement
             transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y + 3, transform.eulerAngles.z);
             //Rotate camera view
-            Camera.main.GetComponent<CameraController>().RotateCam(100);
+            Camera.main.GetComponent<CameraController>().RotateCam(130);
         }
         //Move back with S or DOWN
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
             //Moving backwards is slowed
-            transform.position -= transform.forward * Time.deltaTime * speed/2;
+            rb.AddForce(-(Camera.main.transform.forward * speed));
         }
     }
 
@@ -143,14 +143,18 @@ public class Movement : MonoBehaviour {
                 KillPlayer();
                 break;
             //Enemy Player
-            case ("enemyPlayer"):
-                //Kill the player object
-                KillPlayer();
+            case ("enemyPlayer"):               
+                col.gameObject.GetComponent<EnemyPlayerScript>().CollisionWithPlayer();
                 break;
             //hit black hole
             case ("blackHole"):
                 //Kill player
                 KillPlayer();
+                break;
+            //Hit poison mushroom
+            case ("poisonObj"):
+                Destroy(col.gameObject);
+                energyScript.AddEnergy(energyScript.GetNegativeEnergy());
                 break;
 
 
