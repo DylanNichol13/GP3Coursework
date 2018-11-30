@@ -32,17 +32,21 @@ public class Movement : MonoBehaviour {
 
     public void StartGame()
     {
-        transform.position = new Vector3(0, 7.5f, 0);
         transform.localScale = new Vector3(3, 3, 3);
+        transform.position = new Vector3(0, 7.5f, 0);
         energyScript.ResetEnergy();
     }
 
 	private void FixedUpdate()
     {
-        //Moving to based on key presses
-        CheckMovement();
-        //Clamp player movement
-        CheckBoundaries();
+        //If the game is being played
+        if (StateController.instance)
+        {
+            //Moving to based on key presses
+            CheckMovement();
+            //Clamp player movement
+            CheckBoundaries();
+        }
 
     }
 

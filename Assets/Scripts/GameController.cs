@@ -10,6 +10,8 @@ public class GameController : MonoBehaviour {
 
     private ObstacleController obstacleController;
     private Movement movementScript;
+    private StateController stateController;
+    private EnemyPlayerScript enemy;
 
     // Use this for initialization
     void Start() {
@@ -17,6 +19,8 @@ public class GameController : MonoBehaviour {
         EnableMenu();
         obstacleController = GameObject.Find("ObstacleCreator").GetComponent<ObstacleController>();
         movementScript = GameObject.Find("Player").GetComponent<Movement>();
+        stateController = GetComponent<StateController>();
+        enemy = GameObject.Find("EnemyPlayer").GetComponent<EnemyPlayerScript>();
     }
 
     // Update is called once per frame
@@ -34,6 +38,7 @@ public class GameController : MonoBehaviour {
     {
         ResetUI();
         uiObjects[0].transform.localScale = shown;
+        stateController.DisableInstance();
     }
 
     public void EnableMenu()
@@ -46,7 +51,9 @@ public class GameController : MonoBehaviour {
     {
         ResetUI();
         obstacleController.StartNewGame();
+        enemy.StartGame();
         movementScript.StartGame();
+        stateController.SetInstance();
         Camera.main.GetComponent<CameraController>().PlayerReset();
     }
 

@@ -9,10 +9,43 @@ public class ObstacleController : MonoBehaviour {
     GameObject obstacleContainer;
     //Renderer of world
     Renderer worldRenderer;
-
+    //Amount of mushrooms to add
+    [SerializeField]
+    float mushroomCount;
     //Set in inspector
     [SerializeField]
     Vector3 blackHoleSize;
+    //Timer for spawning new mushrooms
+    [SerializeField]
+    float respawnTimer;
+    float currentTime = 0;
+
+    //Called everyFrame
+    private void Update()
+    {
+        //If the game is being played
+        if (StateController.instance)
+        {
+            //Check if new mushroom spawns are required.
+            //This is called on the first frame of every game start, as the currentTimer float will be set to 0
+            //Then called every *respawnTimer* seconds
+            UpdateRespawnTimer();
+        }
+    }
+
+    //Update the respawn timer
+    private void UpdateRespawnTimer()
+    {
+        if (currentTime <= 0)
+        {
+            //Generate blue cube obstacles
+            obstacles = CreateObstacles();
+            //REset timer
+            currentTime = respawnTimer;
+        }
+        //Reduce every second
+        currentTime -= Time.deltaTime;
+    }
 
 	// Use this for initialization
 	public void StartNewGame () {
@@ -22,10 +55,8 @@ public class ObstacleController : MonoBehaviour {
         ClearObjects();
         //Generating obstacle container
         obstacleContainer = CreateObstacleContainer();
-        //Generate blue cube obstacles
-        obstacles = CreateObstacles();
         //Generating red sphere obstacles
-        GenerateObstacles();
+        //GenerateObstacles();
         //Gen a black hole
         GenerateBlackHole();
 	}
@@ -53,7 +84,7 @@ public class ObstacleController : MonoBehaviour {
         //Initialize array list
         ArrayList obs = new ArrayList();
         //Add objects to arraylist
-        for(int i = 0; i < 6; i++)
+        for(int i = 0; i < mushroomCount; i++)
         {
             GameObject newObstacle = CreateObstacle(i);
             obs.Add(newObstacle);
@@ -68,6 +99,8 @@ public class ObstacleController : MonoBehaviour {
         GameObject newObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         //Randomize the obstacle starting position
         newObj.transform.position = GetRandomWorldPos();
+        //Set scale to small
+        newObj.transform.localScale = new Vector3(0, 0, 0);
         //Get renderer and rigidbody components
         Renderer renderer = newObj.GetComponent<Renderer>();
         Rigidbody rb = newObj.AddComponent<Rigidbody>();

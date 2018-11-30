@@ -64,8 +64,16 @@ public class SQLtest : MonoBehaviour
         //Create command
         IDbCommand cmd = dbConn.CreateCommand();
 
-        cmd.CommandText = "insert into highscore (name, score) VALUES ('" + name + "', " + score + ");";
+        cmd.CommandText = "insert into highscore (name, score) VALUES (@Name, @Score);";
+
+        SqliteParameter setName = new SqliteParameter("@Name", name);
+        SqliteParameter setScore = new SqliteParameter("@Score", score);
+
+        cmd.Parameters.Add(setName);
+        cmd.Parameters.Add(setScore);
+
         cmd.ExecuteNonQuery();
+
 
         cmd.CommandText = "select * from highscore order by score desc;";
 

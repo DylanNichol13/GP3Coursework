@@ -63,6 +63,7 @@
      <Compile Include="Assets\Scripts\ObstacleController.cs" />
      <Compile Include="Assets\Scripts\PlaneScript.cs" />
      <Compile Include="Assets\Scripts\PlayerEnergyScript.cs" />
+     <Compile Include="Assets\Scripts\StateController.cs" />
      <Compile Include="Assets\SQLtest.cs" />
  <Reference Include="UnityEditor.StandardEvents">
  <HintPath>C:/Users/dnicho200/Documents/GitHub/GP3Coursework/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>

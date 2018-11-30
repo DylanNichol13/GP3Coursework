@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -34,11 +35,16 @@ public class EnemyPlayerScript : MonoBehaviour
         UpdateColour();
     }
 
+    public void StartGame()
+    {
+        transform.position = GetRandomStartPos();
+    }
+
     // Update is called once per frame
     void Update()
     {
         //If chase is off cooldown
-        if (CanCollide())
+        if (CanCollide() && StateController.instance)
         {
             //Chase the player
             ChasePlayer();
@@ -72,6 +78,34 @@ public class EnemyPlayerScript : MonoBehaviour
             UpdateColour();
         }
     }
+
+    //Max possible offset of position
+    [SerializeField]
+    private float offsetMax;
+    private Vector3 GetRandomStartPos()
+    {
+        //Get the renderer comp from world map
+        Renderer worldRenderer = GameObject.Find("GameWorld").GetComponent<Renderer>();
+        //Min values of mesh
+        float minX = worldRenderer.bounds.min.x;
+        float minY = worldRenderer.bounds.min.y;
+        float minZ = worldRenderer.bounds.min.z;
+        //Max vals of mesh
+        float maxX = worldRenderer.bounds.max.x;
+        float maxY = worldRenderer.bounds.max.y;
+        float maxZ = worldRenderer.bounds.max.z;
+        //Randomize X and Z around edge of mesh using an offset for max possible distance
+        float xPos = UnityEngine.Random.value > 0.5f ? 
+            UnityEngine.Random.Range(minX, minX + offsetMax) :
+            UnityEngine.Random.Range(maxX, maxX - offsetMax);
+
+        float zPos = UnityEngine.Random.value > 0.5 ?
+            UnityEngine.Random.Range(minZ, minZ + offsetMax) :
+            UnityEngine.Random.Range(maxZ, maxZ - offsetMax);
+        //Return random pos
+        return new Vector3(xPos, minY, zPos);
+    }
+
 
     private bool CanCollide()
     {
@@ -120,7 +154,7 @@ public class EnemyPlayerScript : MonoBehaviour
         switch (col.gameObject.tag)
         {
             case "blackHole":
-                GameObject.Destroy(gameObject);
+                StartGame();
                 break;
         }
     }

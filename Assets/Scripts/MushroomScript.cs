@@ -70,6 +70,8 @@ public class MushroomScript : MonoBehaviour {
 
     private void Update()
     {
+        GrowMushroom();
+
         mushroom.CalculateAge();
         //Calc elapsed time
         CalcElapsedTime();
@@ -80,6 +82,22 @@ public class MushroomScript : MonoBehaviour {
             CreatePoisonMushroom();
         if (mushroom.ReachedDeathAge())
             FloatingBehaviour();
+    }
+
+
+
+    float scalingTime = 8f;
+    float elapsedTime = 0;
+    //For growing upon instantiation
+    private void GrowMushroom()
+    {
+        //Target scales
+        Vector3 targetScale = new Vector3(1, 1, 1);
+        if (scalingTime > elapsedTime)
+        {
+            elapsedTime += Time.deltaTime;
+            transform.localScale = Vector3.Lerp(transform.lossyScale, targetScale, elapsedTime/scalingTime);
+        }
     }
 
     //For shrinking reference to the original scale
