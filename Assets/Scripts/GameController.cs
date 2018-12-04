@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
     public GameObject[] uiObjects;
@@ -12,6 +15,8 @@ public class GameController : MonoBehaviour {
     private Movement movementScript;
     private StateController stateController;
     private EnemyPlayerScript enemy;
+
+    const string newGameBtnText = "Create New Game";
 
     // Use this for initialization
     void Start() {
@@ -58,6 +63,14 @@ public class GameController : MonoBehaviour {
         Camera.main.GetComponent<CameraController>().PlayerReset();
     }
 
+    public void EnableGameSelect()
+    {
+        ResetUI();
+        uiObjects[5].transform.localScale = shown;
+
+        GetComponent<LoadGameScript>().PopulateGameList();
+    }
+
     public void EnableScoreboard()
     {
         ResetUI();
@@ -80,9 +93,36 @@ public class GameController : MonoBehaviour {
         ResetUI();
         GetComponent<SQLSaveData>().SavePlayerData();
         GetComponent<SQLSaveData>().SaveMushroomData(GetMushroomList());
+        GetComponent<SQLSaveData>().SaveEnemyData();
 
         uiObjects[3].transform.localScale = shown;
         stateController.SetInstance();
+    }
+
+    public void LoadGame()
+    {
+        string saveName = EventSystem.current.currentSelectedGameObject.transform.GetChild(0).GetComponent<Text>().text;
+
+        if (saveName == newGameBtnText)
+        {
+            StartGame();
+        }
+        else
+        {
+            List<LoadGameScript.SavedGame> savedGameList = GetComponent<SQLLoadData>().GetSavedGames();
+            foreach (LoadGameScript.SavedGame s in savedGameList)
+            {
+                if (s.gameName == saveName)
+                {
+                    GenerateGameData(s.id);
+                }
+            }
+        }
+    }
+
+    private void GenerateGameData(int id)
+    {
+        GetComponent<LoadGameScript>().GeneratePlayerSaveData(id);
     }
 
     private List<GameObject> GetMushroomList()

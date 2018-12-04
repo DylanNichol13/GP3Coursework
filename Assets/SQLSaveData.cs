@@ -12,12 +12,16 @@ public class SQLSaveData : MonoBehaviour {
     IDbConnection dbConn;
 
     private GameObject player;
+    private GameObject enemy;
     private PlayerEnergyScript playerEnergy;
+    private EnemyPlayerScript enemyScript;
     private GameObject inputField;
     private Text inputText;
     // Use this for initialization
     void Start () {
         player = GameObject.Find("Player");
+        enemy = GameObject.Find("EnemyPlayer");
+        enemyScript = enemy.GetComponent<EnemyPlayerScript>();
         playerEnergy = player.GetComponent<PlayerEnergyScript>();
         inputField = GameObject.Find("SaveName_Input");
         inputText = inputField.transform.GetChild(1).GetComponent<Text>();
@@ -53,7 +57,6 @@ public class SQLSaveData : MonoBehaviour {
 
 	private void CreateTables()
     {
-        print("yeh");
         dbConn = (IDbConnection)new SqliteConnection(conn);
         dbConn.Open();
 
@@ -81,6 +84,28 @@ public class SQLSaveData : MonoBehaviour {
         cmd.CommandText = "INSERT INTO playerData (name, energy, posX, posY, posZ) VALUES (@Name, @Energy, @PosX, @PosY, @PosZ);";
 
         cmd.Parameters.Add(new SqliteParameter("@Name", saveName));
+        cmd.Parameters.Add(new SqliteParameter("@Energy", energy));
+        cmd.Parameters.Add(new SqliteParameter("@PosX", position.x));
+        cmd.Parameters.Add(new SqliteParameter("@PosY", position.y));
+        cmd.Parameters.Add(new SqliteParameter("@PosZ", position.z));
+
+        cmd.ExecuteNonQuery();
+
+        dbConn.Close();
+    }
+
+    public void SaveEnemyData()
+    {
+        dbConn.Open();
+        IDbCommand cmd = dbConn.CreateCommand();
+
+        int id = GetSaveID();
+        float energy = enemyScript.GetEnemyEnergy();
+        Vector3 position = enemy.transform.position;    
+
+        cmd.CommandText = "INSERT INTO enemyData (id, energy, posX, posY, posZ) VALUES (@Id, @Energy, @PosX, @PosY, @PosZ);";
+
+        cmd.Parameters.Add(new SqliteParameter("@Id", id));
         cmd.Parameters.Add(new SqliteParameter("@Energy", energy));
         cmd.Parameters.Add(new SqliteParameter("@PosX", position.x));
         cmd.Parameters.Add(new SqliteParameter("@PosY", position.y));
@@ -136,7 +161,7 @@ public class SQLSaveData : MonoBehaviour {
 
         IDbCommand cmd = dbConn.CreateCommand();
 
-        cmd.CommandText = "SELECT * FROM highscore WHERE id = (SELECT MAX(id)  FROM highscore); ";
+        cmd.CommandText = "SELECT * FROM playerData WHERE id = (SELECT MAX(id)  FROM playerData); ";
         cmd.ExecuteNonQuery();
 
         IDataReader reader = cmd.ExecuteReader();

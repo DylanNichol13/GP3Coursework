@@ -23,6 +23,7 @@ public class PlayerEnergyScript : MonoBehaviour {
     public float GetMushroomEnergy() { return mushroomEnergy; }
     public float GetNegativeEnergy() { return negativeMushroomEnergy; }
     public float GetLeechEnergy() { return enemyLeechEnergy; }
+    public void SetPlayerEnergy(float amount) { currentEnergy = amount; }
 
 	// Use this for initialization
 	void Start () {
