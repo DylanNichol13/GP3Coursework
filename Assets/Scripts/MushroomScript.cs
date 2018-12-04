@@ -8,7 +8,7 @@ public class MushroomScript : MonoBehaviour {
 
     private float timeElapsed = 0;
     //This mushroom instance
-    Mushroom mushroom;
+    public Mushroom mushroom;
     //
     float duration = 20;
 
@@ -60,6 +60,9 @@ public class MushroomScript : MonoBehaviour {
             //Add 1 second each second
             age += 1 * Time.deltaTime;
         }
+
+        public float GetAge() { return age; }
+        public float GetMaxAge() { return deathAge; }
     }
 
     //Called upon instantiation

@@ -334,6 +334,9 @@
     <Compile Include="Assets\Scripts\ObstacleController.cs" />
     <Compile Include="Assets\Scripts\PlaneScript.cs" />
     <Compile Include="Assets\Scripts\PlayerEnergyScript.cs" />
+    <Compile Include="Assets\Scripts\StateController.cs" />
+    <Compile Include="Assets\SQLLoadData.cs" />
+    <Compile Include="Assets\SQLSaveData.cs" />
     <Compile Include="Assets\SQLtest.cs" />
   </ItemGroup>
   <ItemGroup>

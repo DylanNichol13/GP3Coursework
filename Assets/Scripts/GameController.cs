@@ -52,6 +52,7 @@ public class GameController : MonoBehaviour {
         ResetUI();
         obstacleController.StartNewGame();
         enemy.StartGame();
+        uiObjects[3].transform.localScale = shown;
         movementScript.StartGame();
         stateController.SetInstance();
         Camera.main.GetComponent<CameraController>().PlayerReset();
@@ -63,5 +64,38 @@ public class GameController : MonoBehaviour {
         uiObjects[2].transform.localScale = shown;
 
         GetComponent<LeaderboardScript>().DisplayLeaderBoard();
+    }
+
+    public void ShowSaveInputField()
+    {
+        //Unhide the save input field
+        ResetUI();
+
+        uiObjects[4].transform.localScale = shown;
+        stateController.DisableInstance();
+    }
+
+    public void ConfirmSave()
+    {
+        ResetUI();
+        GetComponent<SQLSaveData>().SavePlayerData();
+        GetComponent<SQLSaveData>().SaveMushroomData(GetMushroomList());
+
+        uiObjects[3].transform.localScale = shown;
+        stateController.SetInstance();
+    }
+
+    private List<GameObject> GetMushroomList()
+    {
+        List<GameObject> list = new List<GameObject>();
+        Transform mushroomContainer = GameObject.Find("Obstacle Container").transform;
+
+        foreach(Transform t in mushroomContainer)
+        {
+            if (t.gameObject.tag != "blackHole")
+                list.Add(t.gameObject);
+        }
+
+        return list;
     }
 }
