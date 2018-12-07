@@ -36,7 +36,7 @@ public class GameController : MonoBehaviour {
         //Initialize the script
         Init();
         //Hide all UI panels
-        ChangeUI();
+        ChangeUI(1);
         //Enable the main menu
         EnableMenu();
     }
