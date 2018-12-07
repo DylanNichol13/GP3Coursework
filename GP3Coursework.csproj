@@ -329,6 +329,7 @@
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\LeaderboardListing.cs" />
     <Compile Include="Assets\Scripts\LeaderboardScript.cs" />
+    <Compile Include="Assets\Scripts\LoadGameScript.cs" />
     <Compile Include="Assets\Scripts\Movement.cs" />
     <Compile Include="Assets\Scripts\MushroomScript.cs" />
     <Compile Include="Assets\Scripts\ObstacleController.cs" />

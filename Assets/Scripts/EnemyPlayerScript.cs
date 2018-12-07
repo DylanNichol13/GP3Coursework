@@ -22,6 +22,7 @@ public class EnemyPlayerScript : MonoBehaviour
     private float currentEnergy = 0;
 
     public float GetEnemyEnergy() { return currentEnergy; }
+    public void SetEnemyEnergy(float amount) { currentEnergy = amount; }
 
     // Use this for initialization
     void Start()

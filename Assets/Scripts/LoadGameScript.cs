@@ -13,10 +13,11 @@ public class LoadGameScript : MonoBehaviour {
         public int id;
         public float energy;
 
-        public SavedGame(string name, int ID)
+        public SavedGame(string name, int ID, float Energy)
         {
             gameName = name;
             id = ID;
+            energy = Energy;
         }
     }
 
@@ -42,6 +43,7 @@ public class LoadGameScript : MonoBehaviour {
             GameObject loadListing = GameObject.Instantiate(loadGameBtn);
             loadListing.transform.parent = loadGameBtn.transform.parent;
             loadListing.transform.GetChild(0).GetComponent<Text>().text = s.gameName;
+            loadListing.transform.GetChild(1).GetComponent<Text>().text = s.energy + " Pts";
         }
     }
 
@@ -68,6 +70,101 @@ public class LoadGameScript : MonoBehaviour {
 
         dbConn.Close();
     }
+
+    public void GenerateEnemySaveData(int id)
+    {
+        GameObject enemy = GameObject.Find("EnemyPlayer");
+        EnemyPlayerScript enemyScript = enemy.GetComponent<EnemyPlayerScript>();
+
+        dbConn.Open();
+
+        IDbCommand cmd = dbConn.CreateCommand();
+
+        cmd.CommandText = "SELECT * FROM enemyData WHERE id = @ID;";
+        cmd.Parameters.Add(new SqliteParameter("@ID", id));
+
+        IDataReader reader = cmd.ExecuteReader();
+
+        while (reader.Read())
+        {
+            Vector3 position = new Vector3(reader.GetFloat(2), reader.GetFloat(3), reader.GetFloat(4));
+            enemy.transform.position = position;
+        }
+
+        dbConn.Close();
+    }
 	
-	
+	public void GenerateMushroomSaveData(int id)
+    {
+        List<MushroomScript.Mushroom> loadedMushrooms = new List<MushroomScript.Mushroom>();
+
+        dbConn.Open();
+        IDbCommand cmd = dbConn.CreateCommand();
+
+        cmd.CommandText = "SELECT * FROM mushroomData WHERE id = @ID";
+        cmd.Parameters.Add(new SqliteParameter("@ID", id));
+
+        IDataReader reader = cmd.ExecuteReader();
+
+        MushroomScript.Mushroom newMushroom;
+        while (reader.Read())
+        {
+            float deathAge = reader.GetFloat(1);
+            float age = reader.GetFloat(2);
+            Vector3 pos = new Vector3(reader.GetFloat(3), reader.GetFloat(4), reader.GetFloat(5));
+            Vector3 scale = new Vector3(reader.GetFloat(6), reader.GetFloat(7), reader.GetFloat(8));
+
+            newMushroom = new MushroomScript.Mushroom(age, deathAge);
+            newMushroom.mushroomScale = scale;
+            newMushroom.mushroomPos = pos;
+
+            loadedMushrooms.Add(newMushroom);
+        }
+        dbConn.Close();
+        GameObject.Find("ObstacleCreator").GetComponent<ObstacleController>().CreateObstacles(loadedMushrooms);
+    }
+
+    public void GenerateBlackHoleData(int id)
+    {
+        GameObject blackHole = GameObject.Find("blackHole");
+
+        dbConn.Open();
+
+        IDbCommand cmd = dbConn.CreateCommand();
+
+        cmd.CommandText = "SELECT * FROM blackHoleData WHERE id = @ID;";
+        cmd.Parameters.Add(new SqliteParameter("@ID", id));
+
+        IDataReader reader = cmd.ExecuteReader();
+
+        while (reader.Read())
+        {
+            Vector3 position = new Vector3(reader.GetFloat(1), reader.GetFloat(2), reader.GetFloat(3));
+            blackHole.transform.position = position;
+        }
+
+        dbConn.Close();
+    }
+
+    public void GenerateSpawnerData(int id)
+    {
+        ObstacleController obstacleController = GameObject.Find("ObstacleCreator").GetComponent<ObstacleController>();
+        float timer = obstacleController.GetRespawnTimer();
+
+        dbConn.Open();
+
+        IDbCommand cmd = dbConn.CreateCommand();
+
+        cmd.CommandText = "SELECT * FROM spawnerData WHERE id = @ID;";
+        cmd.Parameters.Add(new SqliteParameter("@ID", id));
+
+        IDataReader reader = cmd.ExecuteReader();
+
+        while (reader.Read())
+        {
+            obstacleController.SetRespawnTimer(reader.GetFloat(1));
+        }
+
+        dbConn.Close();
+    }
 }

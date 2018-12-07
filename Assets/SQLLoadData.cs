@@ -34,7 +34,8 @@ public class SQLLoadData : MonoBehaviour {
         {
             int gameID = reader.GetInt32(0);
             string gameName = reader.GetString(1);
-            LoadGameScript.SavedGame newSavedGame = new LoadGameScript.SavedGame(gameName, gameID);
+            float energy = reader.GetFloat(2);
+            LoadGameScript.SavedGame newSavedGame = new LoadGameScript.SavedGame(gameName, gameID, energy);
             savedGames.Add(newSavedGame);
         }
         dbConn.Close();

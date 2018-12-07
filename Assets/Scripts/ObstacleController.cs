@@ -19,6 +19,8 @@ public class ObstacleController : MonoBehaviour {
     [SerializeField]
     float respawnTimer;
     float currentTime = 0;
+    public float GetRespawnTimer() { return currentTime; }
+    public void SetRespawnTimer(float timer) { currentTime = timer; }
 
     //Called everyFrame
     private void Update()
@@ -38,8 +40,10 @@ public class ObstacleController : MonoBehaviour {
     {
         if (currentTime <= 0)
         {
+            //Generate a list of mushroom data
+            List<MushroomScript.Mushroom> mushrooms = GenerateMushroomData();
             //Generate blue cube obstacles
-            obstacles = CreateObstacles();
+            obstacles = CreateObstacles(mushrooms);
             //REset timer
             currentTime = respawnTimer;
         }
@@ -47,16 +51,30 @@ public class ObstacleController : MonoBehaviour {
         currentTime -= Time.deltaTime;
     }
 
-	// Use this for initialization
-	public void StartNewGame () {
+    private List<MushroomScript.Mushroom> GenerateMushroomData()
+    {
+        List<MushroomScript.Mushroom> list = new List<MushroomScript.Mushroom>();
+        MushroomScript.Mushroom newMushroom;
+
+        for(int i = 0; i < mushroomCount; i++)
+        {
+            newMushroom = new MushroomScript.Mushroom();
+            newMushroom.mushroomPos = GetRandomWorldPos();
+            newMushroom.mushroomScale = new Vector3(0, 0, 0);
+            list.Add(newMushroom);
+        }
+
+        return list;
+    }
+
+    // Use this for initialization
+    public void StartNewGame () {
         //Get the renderer comp from world map
         worldRenderer = GameObject.Find("GameWorld").GetComponent<Renderer>();
         //Clear old objects
         ClearObjects();
         //Generating obstacle container
         obstacleContainer = CreateObstacleContainer();
-        //Generating red sphere obstacles
-        //GenerateObstacles();
         //Gen a black hole
         GenerateBlackHole();
 	}
@@ -79,28 +97,28 @@ public class ObstacleController : MonoBehaviour {
         return newObj;
     }
 
-    private ArrayList CreateObstacles()
+    public ArrayList CreateObstacles(List<MushroomScript.Mushroom> mushroomData)
     {
         //Initialize array list
         ArrayList obs = new ArrayList();
         //Add objects to arraylist
-        for(int i = 0; i < mushroomCount; i++)
+        for(int i = 0; i < mushroomData.Count; i++)
         {
-            GameObject newObstacle = CreateObstacle(i);
+            GameObject newObstacle = CreateObstacle(mushroomData[i], i);
             obs.Add(newObstacle);
         }
         //Return array list
         return obs;
     }
 
-    private GameObject CreateObstacle(int id)
+    private GameObject CreateObstacle(MushroomScript.Mushroom mushroom, int id)
     {
         //Declaration of new gameobject
         GameObject newObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         //Randomize the obstacle starting position
-        newObj.transform.position = GetRandomWorldPos();
+        newObj.transform.position = mushroom.mushroomPos;
         //Set scale to small
-        newObj.transform.localScale = new Vector3(0, 0, 0);
+        newObj.transform.localScale = mushroom.mushroomScale;
         //Get renderer and rigidbody components
         Renderer renderer = newObj.GetComponent<Renderer>();
         Rigidbody rb = newObj.AddComponent<Rigidbody>();
@@ -114,6 +132,8 @@ public class ObstacleController : MonoBehaviour {
         newObj.tag = "blueObj";
         //Add mushroom script to the object
         newObj.AddComponent<MushroomScript>();
+        //Create a new mushroom instance with no preset variables
+        newObj.GetComponent<MushroomScript>().mushroom = mushroom;
         //Return the new object
         return newObj;
     }

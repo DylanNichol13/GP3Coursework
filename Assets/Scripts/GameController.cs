@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour {
     private Movement movementScript;
     private StateController stateController;
     private EnemyPlayerScript enemy;
+    private Text saveInputText;
 
     const string newGameBtnText = "Create New Game";
 
@@ -26,6 +27,7 @@ public class GameController : MonoBehaviour {
         movementScript = GameObject.Find("Player").GetComponent<Movement>();
         stateController = GetComponent<StateController>();
         enemy = GameObject.Find("EnemyPlayer").GetComponent<EnemyPlayerScript>();
+        saveInputText = GameObject.Find("SaveName_Input").transform.GetChild(1).GetComponent<Text>();
     }
 
     // Update is called once per frame
@@ -86,6 +88,7 @@ public class GameController : MonoBehaviour {
 
         uiObjects[4].transform.localScale = shown;
         stateController.DisableInstance();
+        saveInputText.text = "";
     }
 
     public void ConfirmSave()
@@ -94,6 +97,8 @@ public class GameController : MonoBehaviour {
         GetComponent<SQLSaveData>().SavePlayerData();
         GetComponent<SQLSaveData>().SaveMushroomData(GetMushroomList());
         GetComponent<SQLSaveData>().SaveEnemyData();
+        GetComponent<SQLSaveData>().SaveBlackHoleData();
+        GetComponent<SQLSaveData>().SaveObstacleSpawnData();
 
         uiObjects[3].transform.localScale = shown;
         stateController.SetInstance();
@@ -102,10 +107,10 @@ public class GameController : MonoBehaviour {
     public void LoadGame()
     {
         string saveName = EventSystem.current.currentSelectedGameObject.transform.GetChild(0).GetComponent<Text>().text;
-
+        StartGame();
         if (saveName == newGameBtnText)
         {
-            StartGame();
+            
         }
         else
         {
@@ -122,7 +127,12 @@ public class GameController : MonoBehaviour {
 
     private void GenerateGameData(int id)
     {
+        print("jewjew");
         GetComponent<LoadGameScript>().GeneratePlayerSaveData(id);
+        GetComponent<LoadGameScript>().GenerateEnemySaveData(id);
+        GetComponent<LoadGameScript>().GenerateMushroomSaveData(id);
+        GetComponent<LoadGameScript>().GenerateBlackHoleData(id);
+        GetComponent<LoadGameScript>().GenerateSpawnerData(id);
     }
 
     private List<GameObject> GetMushroomList()

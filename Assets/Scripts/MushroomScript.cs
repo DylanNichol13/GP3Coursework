@@ -21,6 +21,10 @@ public class MushroomScript : MonoBehaviour {
         private float deathAge;
         //Oscillate offset
         public float offset;
+        //starting position
+        public Vector3 mushroomPos;
+        //starting scale
+        public Vector3 mushroomScale;
 
         //Mushroom Constructor
         public Mushroom()
@@ -29,6 +33,16 @@ public class MushroomScript : MonoBehaviour {
             age = 0;
             //Get death age
             deathAge = Random.Range(1, maxDeathAge);
+            //Offset
+            offset = Random.Range(1, 380);
+        }
+
+        public Mushroom(float _age, float _deathAge)
+        {
+            //Default age
+            age = _age;
+            //Get death age
+            deathAge = _deathAge;
             //Offset
             offset = Random.Range(1, 380);
         }
@@ -66,25 +80,28 @@ public class MushroomScript : MonoBehaviour {
     }
 
     //Called upon instantiation
-    private void Start()
+    public void NewMushroom()
     {
         mushroom = new Mushroom();
     }
 
     private void Update()
     {
-        GrowMushroom();
+        if (StateController.instance)
+        {
+            GrowMushroom();
 
-        mushroom.CalculateAge();
-        //Calc elapsed time
-        CalcElapsedTime();
-        //Oscillate this object 
-        Oscillate();
+            mushroom.CalculateAge();
+            //Calc elapsed time
+            CalcElapsedTime();
+            //Oscillate this object 
+            Oscillate();
 
-        if (mushroom.ReachedHalfLife())
-            CreatePoisonMushroom();
-        if (mushroom.ReachedDeathAge())
-            FloatingBehaviour();
+            if (mushroom.ReachedHalfLife())
+                CreatePoisonMushroom();
+            if (mushroom.ReachedDeathAge())
+                FloatingBehaviour();
+        }
     }
 
 
