@@ -6,40 +6,56 @@ using UnityEngine;
 public class EnemyPlayerScript : MonoBehaviour
 {
     [SerializeField]
+    //Cool down required to excede before the enemy can chase player after catching
     private float chaseCoolDown;
+    //Current time on the cool down, when reaches 0, enemy can chase again
     public float coolDownTimer;
-
     [SerializeField]
+    //The speed that the enemy moves at
     private float speed;
-
+    //Player game object
     private GameObject playerObj;
+    //Script which holds details of the player energy
     private PlayerEnergyScript energyScript;
+    //Script which holds details of player movements
     private Movement movementScript;
-
     //Energy min and max amounts
     private float minEnergy = 0;
     private float maxEnergy = 100;
+    //Current energy amount of enemy
     private float currentEnergy = 0;
 
+    //Getter and setter for enemy energy
     public float GetEnemyEnergy() { return currentEnergy; }
     public void SetEnemyEnergy(float amount) { currentEnergy = amount; }
 
     // Use this for initialization
     void Start()
     {
+        //Call to initialize upon starting
+        Init();
+    }
+
+    //Called upon instantiation
+    private void Init()
+    {
         //Get player obj
         playerObj = GameObject.Find("Player");
-        //Get player comps
+        //Get player script components
+        //Energy script
         energyScript = playerObj.GetComponent<PlayerEnergyScript>();
+        //movement script
         movementScript = playerObj.GetComponent<Movement>();
         //Set cooldown timer to 0 to start following 
         coolDownTimer = 0;
-        //Get first colour
+        //Update the colour of the enemy material, used here to get the starting colour based on energy
         UpdateColour();
     }
 
+    //When a new game is started and not loaded from a saved file
     public void StartGame()
     {
+        //Randomize the starting position
         transform.position = GetRandomStartPos();
     }
 
@@ -52,7 +68,7 @@ public class EnemyPlayerScript : MonoBehaviour
             //Chase the player
             ChasePlayer();
         }
-        //otherwise, focus on reducing cooldown
+        //otherwise, focus on reducing cooldown first before chasing
         else
             ReduceCoolDown();
     }
@@ -60,14 +76,13 @@ public class EnemyPlayerScript : MonoBehaviour
     //Called to chase the player bobject
     private void ChasePlayer()
     {
-        //Move towards player
+        //Move towards player based on the speed value
         transform.position = Vector3.MoveTowards(transform.position, playerObj.transform.position, Time.deltaTime * speed);
     }
 
     //When the player collides, this is called from the player movement script
     public void CollisionWithPlayer()
     {
-        print(CanCollide());
         //Check that the enemy is off cooldown
         if (CanCollide())
         {
@@ -85,15 +100,16 @@ public class EnemyPlayerScript : MonoBehaviour
     //Max possible offset of position
     [SerializeField]
     private float offsetMax;
+    //Called to return a random starting position
     private Vector3 GetRandomStartPos()
     {
         //Get the renderer comp from world map
         Renderer worldRenderer = GameObject.Find("GameWorld").GetComponent<Renderer>();
-        //Min values of mesh
+        //Get the minimum values on each axis based on the game world mesh size
         float minX = worldRenderer.bounds.min.x;
         float minY = worldRenderer.bounds.min.y;
         float minZ = worldRenderer.bounds.min.z;
-        //Max vals of mesh
+        //Get the maximum values of each axis using the game world mesh size
         float maxX = worldRenderer.bounds.max.x;
         float maxY = worldRenderer.bounds.max.y;
         float maxZ = worldRenderer.bounds.max.z;
@@ -101,34 +117,41 @@ public class EnemyPlayerScript : MonoBehaviour
         float xPos = UnityEngine.Random.value > 0.5f ? 
             UnityEngine.Random.Range(minX, minX + offsetMax) :
             UnityEngine.Random.Range(maxX, maxX - offsetMax);
-
+        //Get random Z position around the edge of the Z axis of the mesh
         float zPos = UnityEngine.Random.value > 0.5 ?
             UnityEngine.Random.Range(minZ, minZ + offsetMax) :
             UnityEngine.Random.Range(maxZ, maxZ - offsetMax);
-        //Return random pos
+        //Return the new random pos
         return new Vector3(xPos, minY, zPos);
     }
 
-
+    //Called on a collision to check if the enemy is elligible for stealing energy
     private bool CanCollide()
     {
+        //Check the cooldown timer to see if it has run out, thus allowing a collision
         if (coolDownTimer <= 0)
         {
             return true;
         }
+        //Otherwise, cannot drain energy & ignores collision behaviour
         else return false;
     }
 
+    //Called to reset the chase cooldown timer after successfully colliding with the player
     private void StartChaseCoolDown()
     {
+        //Set the timer back to the base cool down time
         coolDownTimer = chaseCoolDown;
     }
 
+    //Reducing the cooldown every second when it requires reduction & the enemy cannot collide with the player
     private void ReduceCoolDown()
     {
+        //Reduce timer every second
         coolDownTimer -= Time.deltaTime;
     }
 
+    //Called to update the colour at the start of the game & successful collision with the player
     public void UpdateColour()
     {
         //Max colour value
@@ -144,8 +167,10 @@ public class EnemyPlayerScript : MonoBehaviour
         GetComponent<Renderer>().material.color = c;
     }
 
+    //Adding stolen energy to the enemy from the player, requires an amount to add
     private void AddEnergy(float energy)
     {
+        //Increase the current energy value by the amount stolen
         currentEnergy += energy;
     }
 
@@ -156,7 +181,9 @@ public class EnemyPlayerScript : MonoBehaviour
         //Find action for the tag of the object
         switch (col.gameObject.tag)
         {
+            //After colliding with a black hole -
             case "blackHole":
+                //Position is randomized using the random position criteria
                 StartGame();
                 break;
         }

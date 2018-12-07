@@ -27,24 +27,25 @@ public class PlayerEnergyScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        //Set the initial energy of the player
         SetInitialEnergy();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
+    //Reset energy to minimum value
     private void SetInitialEnergy()
     {
+        //Set to minimum
         currentEnergy = minEnergy;
     }
 
+    //Add energy collected, using the parameter
     public void AddEnergy(float energyToAdd)
     {
+        //Add the energy to the current energy amount
         currentEnergy += energyToAdd;
+        //Clmap between min and max
         currentEnergy = ClampEnergy();
-
+        //Update the colour of the player object material
         UpdateColour();
     }
 
@@ -64,14 +65,18 @@ public class PlayerEnergyScript : MonoBehaviour {
         GetComponent<Renderer>().material.color = c;
     }
 
+    //Clamp the player energy to stay between min and max values
     private float ClampEnergy()
     {
+        //Get the current energy
         float energy = currentEnergy;
+        //Do not let energy go under minimal amount
         if (energy < minEnergy)
             return minEnergy;
+        //Do not let energy exceed max
         else if (energy > maxEnergy)
             return maxEnergy;
-
+        //Return the adjusted value
         return energy;
     }
 }

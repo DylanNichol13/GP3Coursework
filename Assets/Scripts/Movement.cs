@@ -22,18 +22,31 @@ public class Movement : MonoBehaviour {
     //Called on start of application
     private void Start()
     {
+        //Get components required in script
+        Init();
+    }
+
+    //Called to initialize properties by getting components
+    private void Init()
+    {
         //Get the world object
         groundObj = GameObject.Find("GameWorld");
-
+        //Get the energy script held on this object
         energyScript = GetComponent<PlayerEnergyScript>();
+        //Get the game controller
         controller = GameObject.Find("Controller").GetComponent<GameController>();
+        //Get rigidbody on this object
         rb = GetComponent<Rigidbody>();
     }
 
+    //Called when starting a new game
     public void StartGame()
     {
+        //Set the scale of the player object
         transform.localScale = new Vector3(3, 3, 3);
+        //Starting position in center of the map
         transform.position = new Vector3(0, 7.5f, 0);
+        //Reset the player energy to 0
         energyScript.ResetEnergy();
     }
 
@@ -82,6 +95,7 @@ public class Movement : MonoBehaviour {
         }
     }
 
+    //Adding movement force 
     private void AddTheForce(Vector3 movement)
     {
         GetComponent<Rigidbody>().AddForce(movement * speed);
@@ -147,7 +161,7 @@ public class Movement : MonoBehaviour {
                 KillPlayer();
                 break;
             //Enemy Player
-            case ("enemyPlayer"):               
+            case ("enemyPlayer"):
                 col.gameObject.GetComponent<EnemyPlayerScript>().CollisionWithPlayer();
                 break;
             //hit black hole
@@ -163,16 +177,6 @@ public class Movement : MonoBehaviour {
 
 
         }
-    }
-
-    //Continuous collision
-    private void OnCollisionStay(Collision col)
-    {
-    }
-
-    //Collision ended
-    private void OnCollisionExit(Collision col)
-    {
     }
 
     //Kill the player after death criteria met

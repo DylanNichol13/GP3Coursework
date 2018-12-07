@@ -36,7 +36,7 @@ public class MushroomScript : MonoBehaviour {
             //Offset
             offset = Random.Range(1, 380);
         }
-
+        //Constructing a mushroom from saved data
         public Mushroom(float _age, float _deathAge)
         {
             //Default age
@@ -47,6 +47,7 @@ public class MushroomScript : MonoBehaviour {
             offset = Random.Range(1, 380);
         }
 
+        //Detect when the mushroom reaches half its life
         public bool ReachedHalfLife()
         {
             //Calculate half of life span
@@ -59,12 +60,16 @@ public class MushroomScript : MonoBehaviour {
             else return false;
         }
 
+        //Detect when a mushroom has died
         public bool ReachedDeathAge()
         {
+            //Check age against age the mushroom should die at
             if (age >= deathAge)
             {
+                //Exceded death age
                 return true;
             }
+            //Mushroom still alive
             else return false;
         }
 
@@ -79,43 +84,49 @@ public class MushroomScript : MonoBehaviour {
         public float GetMaxAge() { return deathAge; }
     }
 
-    //Called upon instantiation
+    //Called the obstacle controller creates a new mushroom NOT from saved data
     public void NewMushroom()
     {
+        //Randomize age, deathage and oscillate offset
         mushroom = new Mushroom();
     }
 
+    //Called each frame
     private void Update()
     {
+        //Make sure the game has not been paused
         if (StateController.instance)
         {
+            //Grow until at max scale
             GrowMushroom();
-
+            //Update the mushroom age
             mushroom.CalculateAge();
             //Calc elapsed time
             CalcElapsedTime();
             //Oscillate this object 
             Oscillate();
-
+            //Checking the age of the mushroom, to complete half-life and death actions
             if (mushroom.ReachedHalfLife())
                 CreatePoisonMushroom();
             if (mushroom.ReachedDeathAge())
                 FloatingBehaviour();
         }
     }
-
-
-
+    //Max time to complete growth in seconds
     float scalingTime = 8f;
+    //Lerping timer, which starts at 0 and reaches 'scalingTime' upon completion
     float elapsedTime = 0;
     //For growing upon instantiation
     private void GrowMushroom()
     {
         //Target scales
         Vector3 targetScale = new Vector3(1, 1, 1);
+        //If timer has not completed
         if (scalingTime > elapsedTime)
         {
+            //Increase timer
             elapsedTime += Time.deltaTime;
+            //Lerp scale, until at max value, to represent steady fluid growng
             transform.localScale = Vector3.Lerp(transform.lossyScale, targetScale, elapsedTime/scalingTime);
         }
     }
@@ -170,12 +181,15 @@ public class MushroomScript : MonoBehaviour {
         transform.localEulerAngles = new Vector3(osc, osc, osc);
     }
 
+    //Setting a mushroom to poisionous
     private void CreatePoisonMushroom()
     {
+        //Change tag, which is required on the movement script when the player collides with an object
         gameObject.tag = "poisonObj";
+        //Change the colour of object to signal poison
         gameObject.GetComponent<Renderer>().material.color = Color.magenta;
     }
-
+    //Calculate the current elapsed time of the mushroom for oscillation
     private void CalcElapsedTime()
     {
         //Increment

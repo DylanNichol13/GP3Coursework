@@ -51,19 +51,27 @@ public class ObstacleController : MonoBehaviour {
         currentTime -= Time.deltaTime;
     }
 
+    //Generating mushroom data NOT from saved data
     private List<MushroomScript.Mushroom> GenerateMushroomData()
     {
+        //New list of mushroom, which will hold data for each
         List<MushroomScript.Mushroom> list = new List<MushroomScript.Mushroom>();
+        //Mushroom object, used to create individual mushroom
         MushroomScript.Mushroom newMushroom;
 
+        //Repeat to reach the mushroom count
         for(int i = 0; i < mushroomCount; i++)
         {
+            //Instantiate a new mushroom
             newMushroom = new MushroomScript.Mushroom();
+            //Get a random position in the world mesh
             newMushroom.mushroomPos = GetRandomWorldPos();
+            //Set the starting scale to 0
             newMushroom.mushroomScale = new Vector3(0, 0, 0);
+            //Add to the list
             list.Add(newMushroom);
         }
-
+        //Return the list to instantiate objects for each
         return list;
     }
 
@@ -104,7 +112,9 @@ public class ObstacleController : MonoBehaviour {
         //Add objects to arraylist
         for(int i = 0; i < mushroomData.Count; i++)
         {
+            //Create a new obstacle
             GameObject newObstacle = CreateObstacle(mushroomData[i], i);
+            //Add to the container list
             obs.Add(newObstacle);
         }
         //Return array list
